@@ -1,4 +1,4 @@
-package com.highonmusic.users.model;
+package com.highonmusic.users.dto;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @Entity
 @Table(name = "test")
-public class Testmodel {
+public class TestDto {
     @Id
     private int id;
     private String name;

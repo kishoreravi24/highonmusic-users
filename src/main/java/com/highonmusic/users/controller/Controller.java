@@ -1,13 +1,12 @@
 package com.highonmusic.users.controller;
 
 import com.highonmusic.users.dao.Testdao;
-import com.highonmusic.users.model.Testmodel;
+import com.highonmusic.users.dto.AuthenticationDto;
+import com.highonmusic.users.dto.TestDto;
+import com.highonmusic.users.service.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -17,6 +16,8 @@ import java.util.List;
 public class Controller {
 
     private final Testdao testdao;
+    @Autowired
+    private JwtService jwtService;
 
     @GetMapping("")
     public String getUsers(){
@@ -29,7 +30,12 @@ public class Controller {
     }
 
     @GetMapping("/getusers")
-    public List<Testmodel> getAllTestData() {
+    public List<TestDto> getAllTestData() {
         return testdao.findAll();
+    }
+
+    @PostMapping("/authenticate")
+    public String authenticationAndGetToken(@RequestBody AuthenticationDto authenticationDto){
+        return jwtService.generateToken(authenticationDto.getUsername());
     }
 }
