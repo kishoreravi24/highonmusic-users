@@ -1,6 +1,7 @@
 package com.highonmusic.users.controller;
 
 import com.highonmusic.users.dao.Testdao;
+import com.highonmusic.users.dao.Usersdao;
 import com.highonmusic.users.dto.AuthenticationDto;
 import com.highonmusic.users.dto.TestDto;
 import com.highonmusic.users.service.JwtService;
@@ -15,7 +16,9 @@ import java.util.List;
 @EnableDiscoveryClient
 public class Controller {
 
+
     private final Testdao testdao;
+    private final Usersdao usersdao;
     @Autowired
     private JwtService jwtService;
 
@@ -25,17 +28,30 @@ public class Controller {
     }
 
     @Autowired
-    public Controller(Testdao testdao) {
+    public Controller(Testdao testdao, Usersdao usersdao) {
         this.testdao = testdao;
+        this.usersdao = usersdao;
     }
 
-    @GetMapping("/getusers")
+    @GetMapping("/getTest")
     public List<TestDto> getAllTestData() {
         return testdao.findAll();
     }
 
-    @PostMapping("/authenticate")
-    public String authenticationAndGetToken(@RequestBody AuthenticationDto authenticationDto){
-        return jwtService.generateToken(authenticationDto.getUsername());
+    @PostMapping("/getUsers")
+    public String getAllUsersData(@RequestBody AuthenticationDto authenticationDto) {
+        boolean is_authenticated = usersdao.existsByUsernameAndPassword(authenticationDto.getUsername(),authenticationDto.getPassword());
+        if(is_authenticated){
+            String token = jwtService.generateToken(authenticationDto.getUsername());
+             if(token.length()>=10){
+                 return "Token match";
+             }
+        }
+        return "Token mismatch";
     }
+
+//    @PostMapping("/authenticate")
+//    public String authenticationAndGetToken(@RequestBody AuthenticationDto authenticationDto){
+//        return jwtService.generateToken(authenticationDto.getUsername());
+//    }
 }
