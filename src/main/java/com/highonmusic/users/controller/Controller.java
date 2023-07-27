@@ -38,9 +38,9 @@ public class Controller {
         return testdao.findAll();
     }
 
-    @PostMapping("/getUsers")
-    public String getAllUsersData(@RequestBody AuthenticationDto authenticationDto) {
-        boolean is_authenticated = usersdao.existsByUsernameAndPassword(authenticationDto.getUsername(),authenticationDto.getPassword());
+    @PostMapping("/getUsers/{username}")
+    public String getAllUsersData(@PathVariable String username,@RequestBody AuthenticationDto authenticationDto) {
+        boolean is_authenticated = usersdao.existsByUsernameAndPassword(username,authenticationDto.getPassword());
         if(is_authenticated){
             String token = jwtService.generateToken(authenticationDto.getUsername());
              if(token.length()>=10){
