@@ -49,9 +49,4 @@ public class Controller {
         }
         return "Token mismatch";
     }
-
-//    @PostMapping("/authenticate")
-//    public String authenticationAndGetToken(@RequestBody AuthenticationDto authenticationDto){
-//        return jwtService.generateToken(authenticationDto.getUsername());
-//    }
 }
