@@ -19,6 +19,8 @@ public class Controller {
 
     private final Testdao testdao;
     private final Usersdao usersdao;
+
+    private String token="";
     @Autowired
     private JwtService jwtService;
 
@@ -38,20 +40,27 @@ public class Controller {
         return testdao.findAll();
     }
 
-    @PostMapping("/getUsers")
-    public String getAllUsersData(@RequestBody AuthenticationDto authenticationDto) {
-        boolean is_authenticated = usersdao.existsByUsernameAndPassword(authenticationDto.getUsername(),authenticationDto.getPassword());
-        if(is_authenticated){
-            String token = jwtService.generateToken(authenticationDto.getUsername());
-             if(token.length()>=10){
-                 return "Token match";
-             }
-        }
-        return "Token mismatch";
+    @GetMapping("/getUsers")
+    public List<AuthenticationDto> getAllUsersData(){
+        return usersdao.findAll();
     }
 
-//    @PostMapping("/authenticate")
-//    public String authenticationAndGetToken(@RequestBody AuthenticationDto authenticationDto){
-//        return jwtService.generateToken(authenticationDto.getUsername());
-//    }
+    @GetMapping("/getToken/{username}/{password}")
+    public String getAllUsersData(@PathVariable String username,@PathVariable String password) {
+        boolean is_authenticated = usersdao.existsByUsernameAndPassword(username,password);
+        if(is_authenticated){
+            token = jwtService.generateToken(username);
+            if(token.length()>=10) {
+                return "Logged In success";
+            }
+        }else{
+            token="";
+        }
+        return "Failed";
+    }
+
+    @GetMapping("/passToken")
+    public String passToken(){
+        return token;
+    }
 }
