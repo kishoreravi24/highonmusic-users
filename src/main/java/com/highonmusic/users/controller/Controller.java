@@ -19,6 +19,8 @@ public class Controller {
 
     private final Testdao testdao;
     private final Usersdao usersdao;
+
+    private String token="";
     @Autowired
     private JwtService jwtService;
 
@@ -38,15 +40,27 @@ public class Controller {
         return testdao.findAll();
     }
 
-    @PostMapping("/getUsers/{username}")
-    public String getAllUsersData(@PathVariable String username,@RequestBody AuthenticationDto authenticationDto) {
-        boolean is_authenticated = usersdao.existsByUsernameAndPassword(username,authenticationDto.getPassword());
+    @GetMapping("/getUsers")
+    public List<AuthenticationDto> getAllUsersData(){
+        return usersdao.findAll();
+    }
+
+    @GetMapping("/getToken/{username}/{password}")
+    public String getAllUsersData(@PathVariable String username,@PathVariable String password) {
+        boolean is_authenticated = usersdao.existsByUsernameAndPassword(username,password);
         if(is_authenticated){
-            String token = jwtService.generateToken(authenticationDto.getUsername());
-             if(token.length()>=10){
-                 return "Token match";
-             }
+            token = jwtService.generateToken(username);
+            if(token.length()>=10) {
+                return "Logged In success";
+            }
+        }else{
+            token="";
         }
-        return "Token mismatch";
+        return "Failed";
+    }
+
+    @GetMapping("/passToken")
+    public String passToken(){
+        return token;
     }
 }
